@@ -1,5 +1,8 @@
 import json
-
+import os
+import re
+import shutil
+from datetime import datetime
 from application_logging.logger import app_logger
 
 
@@ -46,6 +49,167 @@ class prediction_data_validation:
             raise e
 
         return LengthOfDateStampInFile,LengthOfTimeStampInFile,NumberofColumns,column_names
+
+
+
+    def createdirectoryforgoodbadrawdata(self):
+
+        #description: this method create directories for good data ands bad data for prediction data
+        #output: none
+
+        try:
+            path = os.path.join("Prediction_Raw_Files_Validated/", "Good_Raw/")
+            if not os.path.isdir(path):
+                os.makedirs(path)
+            path = os.path.join("Prediction_Raw_Files_Validated/", "Bad_Raw/")
+            if not os.path.isdir(path):
+                os.makedirs(path)
+
+        except OSError as ex:
+            file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+            self.logger.log(file,"error while creating file %s:" % ex)
+            file.close()
+            raise OSError
+
+    def deleteexsistinggooddatatrainingfolder(self):
+        #this metrhod deletes the directory made to store the bad data
+
+        try:
+            path = "Prediction_Raw_Files_Validated/"
+            if os.path.isdir(path + "Good_Raw/"):
+                shutil.rmtree(path + "Good_Raw/")
+                file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+                self.logger.log(file,"badraw directory deleted before starting validation!!!")
+                file.close()
+
+        except OSError as s:
+            file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+            self.logger.log(file,"error during deleting directory: %s"%s)
+            file.close()
+            raise OSError
+
+    def deleteexsistingbaddatatrainingfolder(self):
+        # this method delete exsisting bad data trainig folder
+
+        try:
+            path = "Prediction_Raw_Files_Validated/"
+            if os.path.isdir(path):
+                shutil.rmtree(path + "bad_raw/")
+                file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+                self.logger.log(file,"succesfully deleted the file")
+                file.close()
+
+        except OSError as s:
+            try:
+                file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+                self.logger.log(file,"error while deleting the directory : %s" %s)
+                file.close()
+                raise OSError
+
+    def moveBadFilesToArchiveBad(self):
+
+        #this method dekets the bad data after it is send to bad data folder from raw data
+        now = datetime.now()
+        date = now.date()
+        time = now.strftime("%h%m%s")
+
+        try:
+            path = "PredictionArchivedBadData"
+            if not os.path.isdir(path):
+                os.makedirs(path)
+            source = "Prediction_Raw_Files_Validated/bad_raw/"
+            dest = "PredictionArchivedBadData/BadData_" + str(date)+"_"+str(time)
+            if not os.path.isdir(dest):
+                os.makedirs(dest)
+            files = os.listdir(source)
+            for f in files:
+                if f not in os.listdir(dest):
+                    shutil.move(source + f,dest)
+
+            file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+            self.logger.log(file,"bad raw file has moved to archieve")
+            path = "Prediction_Raw_Files_Validated/"
+            if os.path.isdir(path + "bad_raw"):
+                shutil.rmtree(path + "bad_raw")
+            self.logger.log(file,"bad raw data folder has been deleted")
+            file.close()
+        except OSError as e:
+            file = open("Prediction_Logs/GeneralLog.txt", 'a+')
+            self.logger.log(file,"error while moving the file: %s" %e)
+            file.close()
+            raise OSError
+
+    def manualRegexCreation(self):
+
+        """
+                                      Method Name: manualRegexCreation
+                                      Description: This method contains a manually defined regex based on the "FileName" given in "Schema" file.
+                                                  This Regex is used to validate the filename of the prediction data.
+                                      Output: Regex pattern
+                                      On Failure: None
+
+                                       Written By: iNeuron Intelligence
+                                      Version: 1.0
+                                      Revisions: None
+
+                                              """
+        regex = "['wafer']+['\_'']+[\d_]+[\d]+\.csv"
+        return regex
+
+
+
+
+
+    def validationfilenameraw(self,regex,LengthOfDateStampInFile,LengthOfTimeStampInFile):
+        #this function verfy the prediction csv file by regex function if nnot okm it will mov to bad raw data
+        #delete the exsisting good trainig data  and bad training data
+        self.deleteexsistingbaddatatrainingfolder()
+        self.deleteexsistinggooddatatrainingfolder()
+        self.createdirectoryforgoodbadrawdata()
+        onlyfiles = [f for f in os.listdir(self.batch_directory)]
+        try:
+            f = open("Prediction_Logs/nameValidationLog.txt", 'a+')
+            for file_name in onlyfiles:
+                if (re.match(regex,file_name)):
+                    splitadot = re.split(".csv",file_name)
+                    splitadot = re.split("_", splitadot[0])
+                    if len(splitadot[1]) == LengthOfDateStampInFile:
+                        if len(splitadot[2]) == LengthOfTimeStampInFile:
+                            shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Good_Raw")
+                            self.logger.log(f,"Valid File name!! File moved to GoodRaw Folder :: %s" % file_name)
+                        else:
+                            shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
+                            self.logger.log(f,"Invalid File Name!! File moved to Bad Raw Folder :: %s" % file_name)
+                    else:
+                        shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
+                        self.logger.log(f,"invalid file name file moved to bad rawfolder:: %s" % file_name)
+
+
+                else:
+                    shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
+                    self.logger.log(f,"invalid file name file moved to bad rawfolder:: %s" % file_name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

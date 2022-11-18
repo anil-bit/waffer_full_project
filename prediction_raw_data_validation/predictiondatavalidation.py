@@ -3,7 +3,9 @@ import os
 import re
 import shutil
 from datetime import datetime
-from application_logging.logger import app_logger
+from application_logging.logger import App_Logger
+import pandas as pd
+from os import listdir
 
 
 
@@ -12,14 +14,14 @@ class prediction_data_validation:
         # This class shall be used for handling all the validation done on the Raw Prediction Data!!.
         self.batch_directory = path
         self.schema_path = "schema_prediction.json"
-        self.logger = app_logger()
+        self.logger = App_Logger()
     def valuesfromschema(self):
         #this method describes all the relevent information from the predifined schema file
         #outputfile: LengthOfDateStampInFile, LengthOfTimeStampInFile, NumberofColumns
         try:
             with open(self.schema_path,"r") as f:
                 dic = json.load(f)
-                print(dic)
+                #print(dic)
                 f.close()
             pattern = dic["SampleFileName"]
             LengthOfDateStampInFile = dic["LengthOfDateStampInFile"]
@@ -50,6 +52,98 @@ class prediction_data_validation:
 
         return LengthOfDateStampInFile,LengthOfTimeStampInFile,NumberofColumns,column_names
 
+    def manualRegexCreation(self):
+
+            """
+                                          Method Name: manualRegexCreation
+                                          Description: This method contains a manually defined regex based on the "FileName" given in "Schema" file.
+                                                      This Regex is used to validate the filename of the prediction data.
+                                          Output: Regex pattern
+                                          On Failure: None
+
+                                           Written By: iNeuron Intelligence
+                                          Version: 1.0
+                                          Revisions: None
+
+                                                  """
+            regex = "['wafer']+['\_'']+[\d_]+[\d]+\.csv"
+            return regex
+    def validationfilenameraw(self,regex,LengthOfDateStampInFile,LengthOfTimeStampInFile):
+        #this function verfy the prediction csv file by regex function if nnot okm it will mov to bad raw data
+        #delete the exsisting good trainig data  and bad training data
+        self.deleteexsistingbaddatatrainingfolder()
+        self.deleteexsistinggooddatatrainingfolder()
+        self.createdirectoryforgoodbadrawdata()
+        onlyfiles = [f for f in listdir(self.batch_directory)]
+        try:
+            f = open("prediction_logs/nameValidationLog.txt", 'a+')
+            for file_name in onlyfiles:
+                #print(file_name)
+                if (re.match(regex,file_name)):
+                    splitadot = re.split(".csv",file_name)
+                    splitadot = (re.split("_", splitadot[0]))
+                    if len(splitadot[1]) == LengthOfDateStampInFile:
+                        if len(splitadot[2]) == LengthOfTimeStampInFile:
+                            shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Good_Raw")
+                            self.logger.log(f,"Valid File name!! File moved to GoodRaw Folder :: %s" % file_name)
+                        else:
+                            shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
+                            self.logger.log(f,"Invalid File Name!! File moved to Bad Raw Folder :: %s" % file_name)
+                    else:
+                        shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
+                        self.logger.log(f,"invalid file name file moved to bad rawfolder:: %s" % file_name)
+                else:
+                    shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
+                    self.logger.log(f,"invalid file name file moved to bad rawfolder:: %s" % file_name)
+            f.close()
+        except Exception as e:
+            f = open("prediction_logs/nameValidationLog.txt", 'a+')
+            self.logger.log(f, "Error occured while validating FileName %s" % e)
+            f.close()
+            raise e
+
+
+
+
+    def deleteexsistingbaddatatrainingfolder(self):
+        # this method delete exsisting bad data trainig folder
+
+        try:
+            path = "Prediction_Raw_Files_Validated/"
+            if os.path.isdir(path+"Bad_Raw/"):
+                shutil.rmtree(path + "Bad_Raw/")
+                file = open("prediction_logs/GeneralLog.txt", 'a+')
+                self.logger.log(file,"succesfully deleted the file")
+                file.close()
+
+        except OSError as s:
+            file = open("prediction_logs/GeneralLog.txt", 'a+')
+            self.logger.log(file,"error while deleting the directory : %s" %s)
+            file.close()
+            raise OSError
+
+    def deleteexsistinggooddatatrainingfolder(self):
+        #this metrhod deletes the directory made to store the bad data
+
+        try:
+            path = "Prediction_Raw_Files_Validated/"
+            if os.path.isdir(path + "Good_Raw/"):
+                shutil.rmtree(path + "Good_Raw/")
+                file = open("prediction_logs/GeneralLog.txt", 'a+')
+                self.logger.log(file,"badraw directory deleted before starting validation!!!")
+                file.close()
+
+        except OSError as s:
+            file = open("prediction_logs/GeneralLog.txt", 'a+')
+            self.logger.log(file,"error during deleting directory: %s"%s)
+            file.close()
+            raise OSError
+
+
+
+
+
+
 
 
     def createdirectoryforgoodbadrawdata(self):
@@ -71,40 +165,9 @@ class prediction_data_validation:
             file.close()
             raise OSError
 
-    def deleteexsistinggooddatatrainingfolder(self):
-        #this metrhod deletes the directory made to store the bad data
+    
 
-        try:
-            path = "Prediction_Raw_Files_Validated/"
-            if os.path.isdir(path + "Good_Raw/"):
-                shutil.rmtree(path + "Good_Raw/")
-                file = open("Prediction_Logs/GeneralLog.txt", 'a+')
-                self.logger.log(file,"badraw directory deleted before starting validation!!!")
-                file.close()
-
-        except OSError as s:
-            file = open("Prediction_Logs/GeneralLog.txt", 'a+')
-            self.logger.log(file,"error during deleting directory: %s"%s)
-            file.close()
-            raise OSError
-
-    def deleteexsistingbaddatatrainingfolder(self):
-        # this method delete exsisting bad data trainig folder
-
-        try:
-            path = "Prediction_Raw_Files_Validated/"
-            if os.path.isdir(path):
-                shutil.rmtree(path + "bad_raw/")
-                file = open("Prediction_Logs/GeneralLog.txt", 'a+')
-                self.logger.log(file,"succesfully deleted the file")
-                file.close()
-
-        except OSError as s:
-            try:
-                file = open("Prediction_Logs/GeneralLog.txt", 'a+')
-                self.logger.log(file,"error while deleting the directory : %s" %s)
-                file.close()
-                raise OSError
+'''    
 
     def moveBadFilesToArchiveBad(self):
 
@@ -139,60 +202,27 @@ class prediction_data_validation:
             file.close()
             raise OSError
 
-    def manualRegexCreation(self):
-
-        """
-                                      Method Name: manualRegexCreation
-                                      Description: This method contains a manually defined regex based on the "FileName" given in "Schema" file.
-                                                  This Regex is used to validate the filename of the prediction data.
-                                      Output: Regex pattern
-                                      On Failure: None
-
-                                       Written By: iNeuron Intelligence
-                                      Version: 1.0
-                                      Revisions: None
-
-                                              """
-        regex = "['wafer']+['\_'']+[\d_]+[\d]+\.csv"
-        return regex
+    
 
 
 
 
 
-    def validationfilenameraw(self,regex,LengthOfDateStampInFile,LengthOfTimeStampInFile):
-        #this function verfy the prediction csv file by regex function if nnot okm it will mov to bad raw data
-        #delete the exsisting good trainig data  and bad training data
-        self.deleteexsistingbaddatatrainingfolder()
-        self.deleteexsistinggooddatatrainingfolder()
-        self.createdirectoryforgoodbadrawdata()
-        onlyfiles = [f for f in os.listdir(self.batch_directory)]
+
+
+
+    def validatecloumnlength(self,NumberofColumns):
+        #have to check the no of columns is present or not
+        #if present send the data to good raw data
+        #if not presernt send it bad raw data
+        #output: none
         try:
-            f = open("Prediction_Logs/nameValidationLog.txt", 'a+')
-            for file_name in onlyfiles:
-                if (re.match(regex,file_name)):
-                    splitadot = re.split(".csv",file_name)
-                    splitadot = re.split("_", splitadot[0])
-                    if len(splitadot[1]) == LengthOfDateStampInFile:
-                        if len(splitadot[2]) == LengthOfTimeStampInFile:
-                            shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Good_Raw")
-                            self.logger.log(f,"Valid File name!! File moved to GoodRaw Folder :: %s" % file_name)
-                        else:
-                            shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
-                            self.logger.log(f,"Invalid File Name!! File moved to Bad Raw Folder :: %s" % file_name)
-                    else:
-                        shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
-                        self.logger.log(f,"invalid file name file moved to bad rawfolder:: %s" % file_name)
+            f = open("Prediction_Logs/columnValidationLog.txt", 'a+')
+            self.logger.log(f,"coloumn length validation started")
+            for file in os.listdir("Prediction_Raw_Files_Validated/Good_Raw/"):
+                csv = pd.read_csv("Prediction_Raw_Files_Validated/Good_Raw/"+file)
 
-
-                else:
-                    shutil.copy("Prediction_Batch_files/" + file_name, "Prediction_Raw_Files_Validated/Bad_Raw")
-                    self.logger.log(f,"invalid file name file moved to bad rawfolder:: %s" % file_name)
-
-
-
-
-
+'''
 
 
 

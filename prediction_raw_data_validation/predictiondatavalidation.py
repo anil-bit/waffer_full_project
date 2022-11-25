@@ -165,7 +165,76 @@ class prediction_data_validation:
             file.close()
             raise OSError
 
-    
+    def validatecloumnlength(self,orignal_column_length):
+        #have to check the no of columns is present or not
+        #if present send the data to good raw data
+        #if not presernt send it bad raw data
+        #output: none
+        try:
+            f = open("prediction_logs/columnValidationLog.txt", 'a+')
+            self.logger.log(f,"coloumn length validation started")
+            for file in listdir("Prediction_Raw_Files_Validated/Good_Raw/"):
+                csv = pd.read_csv("Prediction_Raw_Files_Validated/Good_Raw/"+file)
+                if csv.shape[1]==orignal_column_length:
+                    csv.rename(columns={"Unnamed: 0": "wafer"}, inplace=True)
+                    csv.to_csv("Prediction_Raw_Files_Validated/Good_Raw/"+file,index=None,header=True)
+                else:
+                    shutil.move("Prediction_Raw_Files_Validated/Good_Raw/"+file,"Prediction_Raw_Files_Validated/Bad_Raw/")
+                    self.logger.log(f,"invalid column length of file ,file moved to bad raw folder: %s" %file)
+            self.logger.log(f,"validation of column is completed")
+
+        except OSError:
+            f = open("prediction_logs/columnValidationLog.txt", 'a+')
+            self.logger.log(f,"error occured while moving the file: %s" % OSError)
+            f.close()
+            raise OSError
+        except Exception as e:
+            f = open("prediction_logs/columnValidationLog.txt", 'a+')
+            self.logger.log(f,"error occured while moving the file: %s" % e)
+            f.close()
+            raise e
+        f.close()
+
+    def validatemissingvalueinwholecolumn(self):
+        #this function validates if all the fill of any pirticular column is missing
+        #such files shold move t o bad raw data
+        #output:none
+        try:
+            f = open("prediction_logs/columnValidationLog.txt", 'a+')
+            self.logger.log(f, "Missing Values Validation Started!!")
+            for file in listdir("Prediction_Raw_Files_Validated/Good_Raw/"):
+                #print(file)
+                csv = pd.read_csv("Prediction_Raw_Files_Validated/Good_Raw/" + file)
+                count = 0
+                #print(csv)
+                for column in csv:
+                    if len(csv[column]) - csv[column].count() == len(csv[column]):
+                        count+=1
+                        shutil.move("Prediction_Raw_Files_Validated/Good_Raw/" + file,
+                                        "Prediction_Raw_Files_Validated/Bad_Raw")
+                        self.logger.log(f,"Invalid Column Length for the file!! File moved to Bad Raw Folder :: %s" % file)
+                        break
+                if count==0:
+                    csv.rename(columns={"Unnamed: 0": "Wafer"}, inplace=True)
+                    csv.to_csv("Prediction_Raw_Files_Validated/Good_Raw/" + file, index=None, header=True)
+
+        except OSError:
+            f = open("prediction_logs/missingValuesInColumn.txt", 'a+')
+            self.logger.log(f, "Error Occured while moving the file :: %s" % OSError)
+            f.close()
+            raise OSError
+        except Exception as e:
+            f = open("prediction_logs/missingValuesInColumn.txt", 'a+')
+            self.logger.log(f, "Error Occured:: %s" % e)
+            f.close()
+            raise e
+        f.close()
+
+
+
+
+
+
 
 '''    
 
@@ -211,16 +280,7 @@ class prediction_data_validation:
 
 
 
-    def validatecloumnlength(self,NumberofColumns):
-        #have to check the no of columns is present or not
-        #if present send the data to good raw data
-        #if not presernt send it bad raw data
-        #output: none
-        try:
-            f = open("Prediction_Logs/columnValidationLog.txt", 'a+')
-            self.logger.log(f,"coloumn length validation started")
-            for file in os.listdir("Prediction_Raw_Files_Validated/Good_Raw/"):
-                csv = pd.read_csv("Prediction_Raw_Files_Validated/Good_Raw/"+file)
+
 
 '''
 

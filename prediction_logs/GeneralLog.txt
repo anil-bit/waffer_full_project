@@ -19,3 +19,39 @@
 2022-11-18/17:37:30		badraw directory deleted before starting validation!!!
 2022-11-18/17:38:56		succesfully deleted the file
 2022-11-18/17:38:56		badraw directory deleted before starting validation!!!
+2022-11-21/06:29:03		succesfully deleted the file
+2022-11-21/06:29:03		badraw directory deleted before starting validation!!!
+2022-11-21/06:59:23		succesfully deleted the file
+2022-11-21/06:59:23		badraw directory deleted before starting validation!!!
+2022-11-21/07:12:40		succesfully deleted the file
+2022-11-21/07:12:40		badraw directory deleted before starting validation!!!
+2022-11-21/07:15:06		succesfully deleted the file
+2022-11-21/07:15:06		badraw directory deleted before starting validation!!!
+2022-11-21/07:16:31		succesfully deleted the file
+2022-11-21/07:16:31		badraw directory deleted before starting validation!!!
+2022-11-21/07:20:51		succesfully deleted the file
+2022-11-21/07:20:51		badraw directory deleted before starting validation!!!
+2022-11-21/07:25:10		succesfully deleted the file
+2022-11-21/07:25:10		badraw directory deleted before starting validation!!!
+2022-11-21/07:25:42		succesfully deleted the file
+2022-11-21/07:25:42		badraw directory deleted before starting validation!!!
+2022-11-21/07:25:56		succesfully deleted the file
+2022-11-21/07:25:56		badraw directory deleted before starting validation!!!
+2022-11-21/07:26:15		succesfully deleted the file
+2022-11-21/07:26:15		badraw directory deleted before starting validation!!!
+2022-11-21/07:31:28		succesfully deleted the file
+2022-11-21/07:31:28		badraw directory deleted before starting validation!!!
+2022-11-21/07:32:27		succesfully deleted the file
+2022-11-21/07:32:27		badraw directory deleted before starting validation!!!
+2022-11-21/07:47:40		succesfully deleted the file
+2022-11-21/07:47:40		badraw directory deleted before starting validation!!!
+2022-11-22/06:45:55		succesfully deleted the file
+2022-11-22/06:45:55		badraw directory deleted before starting validation!!!
+2022-11-22/06:47:36		succesfully deleted the file
+2022-11-22/06:47:36		badraw directory deleted before starting validation!!!
+2022-11-22/06:48:26		succesfully deleted the file
+2022-11-22/06:48:26		badraw directory deleted before starting validation!!!
+2022-11-22/06:50:19		succesfully deleted the file
+2022-11-22/06:50:19		badraw directory deleted before starting validation!!!
+2022-11-22/07:02:37		succesfully deleted the file
+2022-11-22/07:02:37		badraw directory deleted before starting validation!!!

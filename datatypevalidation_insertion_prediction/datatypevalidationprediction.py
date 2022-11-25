@@ -1,4 +1,4 @@
-from application_logging.logger import app_logger
+from application_logging.logger import App_Logger
 import sqlite3
 
 class dboperation:
@@ -8,7 +8,7 @@ class dboperation:
         self.path = "prediction_database"
         self.badfilepath = ""
         self.goodfilepath = ""
-        self.logger = app_logger()
+        self.logger = App_Logger()
 
     def databaseconnection(self,databasename):
 
@@ -33,10 +33,36 @@ class dboperation:
         #output: none
         try:
             conn = self.databaseconnection(databasename)
-            conn`.execute`('DROP TABLE IF EXISTS Good_Raw_Data;')
-
+            conn.execute('DROP TABLE IF EXISTS Good_Raw_Data;')
+            #print(column_names.keys())
             for key in column_names.keys():
                 type = column_names[key]
+                #print(type)
+                try:
+                    conn.execute('ALTER TABLE Good_Raw_Data ADD COLUMN "{column_name}" {datatype}'.format(column_name=key,datatype = type))
+                except:
+                    conn.execute('CREATE TABLE Good_Raw_Data ({column_name} {datatype})'.format(column_name=key,datatype=type))
+            conn.close()
+            file = open("Prediction_Logs/DbTableCreateLog.txt", 'a+')
+            self.logger.log(file, "Tables created successfully!!")
+            file.close()
+
+            file = open("Prediction_Logs/DataBaseConnectionLog.txt", 'a+')
+            self.logger.log(file, "Closed %s database successfully" % databasename)
+            file.close()
+
+        except Exception as e:
+            file = open("Prediction_Logs/DbTableCreateLog.txt", 'a+')
+            self.logger.log(file, "Error while creating table: %s " % e)
+            file.close()
+            conn.close()
+            file = open("Prediction_Logs/DataBaseConnectionLog.txt", 'a+')
+            self.logger.log(file, "Closed %s database successfully" % databasename)
+            file.close()
+            raise e
+
+
+
 
 
 

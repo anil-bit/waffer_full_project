@@ -42,3 +42,39 @@
 
 2022-11-18/17:38:56		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
 
+2022-11-21/06:29:03		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/06:59:23		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:12:40		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:15:06		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:16:31		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:20:51		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:25:10		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:25:42		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:25:56		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:26:15		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:31:28		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:32:27		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-21/07:47:40		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-22/06:45:55		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-22/06:47:36		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-22/06:48:26		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-22/06:50:19		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
+2022-11-22/07:02:37		LengthOfDateStampInFile:: 8LengthOfTimeStampInFile:: 6NumberofColumns:: 591
+
